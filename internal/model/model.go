@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -177,6 +178,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		case "ctrl+o":
+			// Opens the current slide in vim
+			err := m.openNewWindow()
+			if err != nil {
+				return m, nil
+			}
 		default:
 			newState := navigation.Navigate(navigation.State{
 				Buffer:      m.buffer,
@@ -313,4 +320,10 @@ func (m *Model) SetPage(page int) {
 // Pages returns all the slides in the presentation.
 func (m *Model) Pages() []string {
 	return m.Slides
+}
+
+// Opens the current slide as a split window in tmux.
+func (m *Model) openNewWindow() error {
+	cmd := exec.Command("tmux", "split-window", "-h", "vim", m.FileName)
+	return cmd.Start()
 }
