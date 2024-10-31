@@ -180,10 +180,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "ctrl+o":
 			// Opens the current slide in an editor
-			err := editor.OpenNewWindow(m.FileName)
-			if err != nil {
-				return m, nil
-			}
+			return m, editor.OpenNewWindow(m.FileName)
 		default:
 			newState := navigation.Navigate(navigation.State{
 				Buffer:      m.buffer,

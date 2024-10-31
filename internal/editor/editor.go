@@ -3,29 +3,19 @@ package editor
 import (
 	"os/exec"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/muesli/coral"
 )
 
-var defaultEditor = "vim"
-
 var (
-	name string
+	program = "vim"
 )
 
 // Opens the current slide as a split window in tmux.
-func OpenNewWindow(fileName string) error {
-	var cmd *exec.Cmd
-
-	switch name {
-	case "vim", "nvim":
-		cmd = exec.Command("tmux", "split-window", "-h", name, fileName)
-	case "code":
-		cmd = exec.Command(name, fileName)
-	}
-
-	return cmd.Start()
+func OpenNewWindow(fileName string) tea.Cmd {
+	return tea.ExecProcess(exec.Command(program, fileName), nil)
 }
 
 func InitEditorFlag(rootCmd *coral.Command) {
-	rootCmd.PersistentFlags().StringVarP(&name, "editor", "e", defaultEditor, "Specify the editor to use")
+	rootCmd.PersistentFlags().StringVarP(&program, "editor", "e", program, "Specify the editor to use")
 }
